@@ -13,17 +13,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    TextView showStudnum, showStudname, showStudsection;
-    EditText classPart;
-    EditText quiz;
-    EditText perfTask;
-    EditText exam;
-    TextView equiv;
+    TextView showStudnum, showStudname, showStudsection, equiv;
+    EditText classPart, quiz, perfTask, exam;
     Button viewDialog, cancel;
-    Double note;
+    Double cpartValue, quizValue, ptaskValue, examValue, result, note;
     String remarks="";
 
     @Override
@@ -94,11 +91,12 @@ public class MainActivity2 extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                classPart.setText(" ");
-                quiz.setText(" ");
-                perfTask.setText(" ");
-                exam.setText(" ");
-                equiv.setText(" ");
+                classPart.setText("");
+                quiz.setText("");
+                perfTask.setText("");
+                exam.setText("");
+                equiv.setText("");
+                Toast.makeText(MainActivity2.this, "Grades Cleared", Toast.LENGTH_SHORT).show();
 
                 viewDialog.setEnabled(false);
                 cancel.setEnabled(false);
@@ -115,30 +113,44 @@ public class MainActivity2 extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             try {
-                if (!TextUtils.isEmpty(classPart.getText().toString().trim())
-                        || !TextUtils.isEmpty(quiz.getText().toString().trim())
-                        || !TextUtils.isEmpty(perfTask.getText().toString().trim())
-                        || !TextUtils.isEmpty(exam.getText().toString().trim())
+                if (!TextUtils.isEmpty(classPart.getText().toString())
+                        || !TextUtils.isEmpty(quiz.getText().toString())
+                        || !TextUtils.isEmpty(perfTask.getText().toString())
+                        || !TextUtils.isEmpty(exam.getText().toString())
                 ) {
-                    Double cpartValue = Double.parseDouble(classPart.getText().toString());
-                    Double quizValue = Double.parseDouble(quiz.getText().toString());
-                    Double ptaskValue = Double.parseDouble(perfTask.getText().toString());
-                    Double examValue = Double.parseDouble(exam.getText().toString());
+                    cpartValue = Double.parseDouble(classPart.getText().toString());
+                    quizValue = Double.parseDouble(quiz.getText().toString());
+                    ptaskValue = Double.parseDouble(perfTask.getText().toString());
+                    examValue = Double.parseDouble(exam.getText().toString());
 
-                    Double result = (cpartValue * 0.1) + (quizValue * 0.2) + (ptaskValue * 0.3) + (examValue * 0.4);
+                    result = (cpartValue * 0.1) + (quizValue * 0.2) + (ptaskValue * 0.3) + (examValue * 0.4);
                     equiv.setText(String.format("%.2f", result));
                 }else {
                     equiv.setText("");
                 }
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
 
             }
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            viewDialog.setEnabled(true);
-            cancel.setEnabled(true);
+            if (!TextUtils.isEmpty(classPart.getText().toString())
+                    && !TextUtils.isEmpty(quiz.getText().toString())
+                    && !TextUtils.isEmpty(perfTask.getText().toString())
+                    && !TextUtils.isEmpty(exam.getText().toString())
+            ) {
+                viewDialog.setEnabled(true);
+                cancel.setEnabled(true);
+            } else if (TextUtils.isEmpty(classPart.getText().toString())
+                    || TextUtils.isEmpty(quiz.getText().toString())
+                    || TextUtils.isEmpty(perfTask.getText().toString())
+                    || TextUtils.isEmpty(exam.getText().toString())
+            ) {
+                viewDialog.setEnabled(false);
+            } else {
+
+            }
         }
     };
 
