@@ -1,12 +1,15 @@
 package com.example.studentinfo;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +23,8 @@ public class MainActivity2 extends AppCompatActivity {
     EditText exam;
     TextView equiv;
     Button viewDialog, cancel;
+    Double note;
+    String remarks="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,50 @@ public class MainActivity2 extends AppCompatActivity {
         perfTask.addTextChangedListener(computeTW);
         exam.addTextChangedListener(computeTW);
         //equiv.addTextChangedListener(computeTW);
+
+        viewDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                note = Double.parseDouble(equiv.getText().toString());
+                String ave = equiv.getText().toString();
+
+                //CONDITION FOR REMARKS
+                if (note > 74.4) {
+                    remarks = "PASSED";
+                }else {
+                    remarks = "FAILED";
+                }
+
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity2.this);
+                alert.setTitle("Student Grade");
+                alert.setMessage("Student Number: " + sNum +
+                        "\nStudent Name: " + lName + ", " + fName + " " + mInitial + ". " +
+                        "\nStudent Section: " + sec +
+                        "\n\nAverage: " + ave + "\nRemarks: " + remarks);
+                alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                alert.show();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                classPart.setText(" ");
+                quiz.setText(" ");
+                perfTask.setText(" ");
+                exam.setText(" ");
+                equiv.setText(" ");
+
+                viewDialog.setEnabled(false);
+                cancel.setEnabled(false);
+            }
+        });
     }
 
     private TextWatcher computeTW = new TextWatcher() {
@@ -71,15 +120,13 @@ public class MainActivity2 extends AppCompatActivity {
                         || !TextUtils.isEmpty(perfTask.getText().toString().trim())
                         || !TextUtils.isEmpty(exam.getText().toString().trim())
                 ) {
-                    Double cpartValue = Double.parseDouble(classPart.getText().toString().trim());
-                    Double quizValue = Double.parseDouble(quiz.getText().toString().trim());
-                    Double ptaskValue = Double.parseDouble(perfTask.getText().toString().trim());
-                    Double examValue = Double.parseDouble(exam.getText().toString().trim());
+                    Double cpartValue = Double.parseDouble(classPart.getText().toString());
+                    Double quizValue = Double.parseDouble(quiz.getText().toString());
+                    Double ptaskValue = Double.parseDouble(perfTask.getText().toString());
+                    Double examValue = Double.parseDouble(exam.getText().toString());
 
-                    double result = (cpartValue * 0.1) + (quizValue * 0.2) + (ptaskValue * 0.3) + (examValue * 0.4);
-                    equiv.setText(String.valueOf(String.format("%.2f", result)));
-                    viewDialog.setEnabled(true);
-                    cancel.setEnabled(true);
+                    Double result = (cpartValue * 0.1) + (quizValue * 0.2) + (ptaskValue * 0.3) + (examValue * 0.4);
+                    equiv.setText(String.format("%.2f", result));
                 }else {
                     equiv.setText("");
                 }
@@ -90,7 +137,9 @@ public class MainActivity2 extends AppCompatActivity {
 
         @Override
         public void afterTextChanged(Editable s) {
-
+            viewDialog.setEnabled(true);
+            cancel.setEnabled(true);
         }
     };
+
 }
