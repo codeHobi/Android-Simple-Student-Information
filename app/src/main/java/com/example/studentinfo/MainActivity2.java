@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,12 +29,12 @@ public class MainActivity2 extends AppCompatActivity {
         showStudnum = (TextView) findViewById(R.id.tvStudnum);
         showStudname = (TextView) findViewById(R.id.tvStudname);
         showStudsection = (TextView) findViewById(R.id.tvSection);
+        equiv = (TextView) findViewById(R.id.tvEquivalent);
 
         classPart = (EditText) findViewById(R.id.etClasspart);
         quiz = (EditText) findViewById(R.id.etQuiz);
         perfTask = (EditText) findViewById(R.id.etTaskperf);
         exam =(EditText) findViewById(R.id.etExam);
-        equiv = (TextView) findViewById(R.id.tvEquivalent);
 
         viewDialog = (Button) findViewById(R.id.btnView);
         cancel = (Button) findViewById(R.id.btnCancel);
@@ -53,15 +54,10 @@ public class MainActivity2 extends AppCompatActivity {
         quiz.addTextChangedListener(computeTW);
         perfTask.addTextChangedListener(computeTW);
         exam.addTextChangedListener(computeTW);
-        equiv.addTextChangedListener(computeTW);
+        //equiv.addTextChangedListener(computeTW);
     }
 
     private TextWatcher computeTW = new TextWatcher() {
-        //Double classpnum = Double.parseDouble(classpartInput);
-        //Double quiznum = Double.parseDouble(quizInput);
-        //Double tasknum = Double.parseDouble(perftaskInput);
-        //Double examnum = Double.parseDouble(examInput);
-
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -69,23 +65,32 @@ public class MainActivity2 extends AppCompatActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String classpartInput = classPart.getText().toString().trim();
-            String quizInput = quiz.getText().toString().trim();
-            String perftaskInput = perfTask.getText().toString().trim();
-            String examInput = exam.getText().toString().trim();
+            try {
+                if (!TextUtils.isEmpty(classPart.getText().toString().trim())
+                        || !TextUtils.isEmpty(quiz.getText().toString().trim())
+                        || !TextUtils.isEmpty(perfTask.getText().toString().trim())
+                        || !TextUtils.isEmpty(exam.getText().toString().trim())
+                ) {
+                    Double cpartValue = Double.parseDouble(classPart.getText().toString().trim());
+                    Double quizValue = Double.parseDouble(quiz.getText().toString().trim());
+                    Double ptaskValue = Double.parseDouble(perfTask.getText().toString().trim());
+                    Double examValue = Double.parseDouble(exam.getText().toString().trim());
 
-            viewDialog.setEnabled(!classpartInput.isEmpty() && !quizInput.isEmpty()
-                    && !perftaskInput.isEmpty() && !examInput.isEmpty());
-            cancel.setEnabled(!classpartInput.isEmpty() || !quizInput.isEmpty()
-                    || !perftaskInput.isEmpty() || !examInput.isEmpty());
+                    double result = (cpartValue * 0.1) + (quizValue * 0.2) + (ptaskValue * 0.3) + (examValue * 0.4);
+                    equiv.setText(String.valueOf(String.format("%.2f", result)));
+                    viewDialog.setEnabled(true);
+                    cancel.setEnabled(true);
+                }else {
+                    equiv.setText("");
+                }
+            } catch (NumberFormatException e) {
+
+            }
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-            //Double equinum = ((classpnum * 0.1) + (quiznum * 0.2) + (tasknum * 0.3) + (examnum * 0.4)) / 4;
-            //String finalequiv = equinum.toString();
 
-            //equiv.setText(String.format("%.2f", equinum));
         }
     };
 }
